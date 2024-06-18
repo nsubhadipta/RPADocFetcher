@@ -1,0 +1,35 @@
+{
+  "name": "rpadocfetcher",
+  "version": "1.0.0",
+  "description": "Crawling (RPA) , merging PDF, convert lang into English from Korean",
+  "main": "rpa.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nsubhadipta/RPADocFetcher.git"
+  },
+  "keywords": [
+    "RPA",
+    "CRAWLING",
+    "Merge PDF",
+    "Convert Language",
+    "NodeJs",
+    "puppeteer"
+  ],
+  "author": "Subhadipta Nayak",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nsubhadipta/RPADocFetcher/issues"
+  },
+  "homepage": "https://github.com/nsubhadipta/RPADocFetcher#readme",
+  "dependencies": {
+    "@vitalets/google-translate-api": "^9.2.0",
+    "google-translate-api": "^2.3.0",
+    "pdf-lib": "^1.17.1",
+    "pdf-parse": "^1.1.1",
+    "puppeteer": "^22.11.1",
+    "tesseract.js": "^5.1.0"
+  }
+}
