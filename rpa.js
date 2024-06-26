@@ -22,17 +22,58 @@ const loginDetails = { id: 'ohk5004', pw: 'MufinNumber1' };
     const startTime = Date.now();
 
     try {
-        
-        // await page.setDefaultNavigationTimeout(60000);
+        // Set higher timeout
+        await page.setDefaultNavigationTimeout(120000);
 
         // Navigate to the target website
-        await page.goto('https://cloud.eais.go.kr/', { waitUntil: 'networkidle2' });
+        await page.goto('https://www.eais.go.kr/', { waitUntil: 'networkidle2' });
+        console.log("Navigated to website");
 
+         // Close popup
+        await page.waitForSelector('#noticeModal > div > div.noticeClose > ul > li:nth-child(1) > button', { visible: true });
+        const closeButton = await page.$('#noticeModal > div > div.noticeClose > ul > li:nth-child(1) > button');
+        await closeButton.click();
+        console.log("Closed popup");
+
+
+        await page.waitForSelector('#header > div.headerWrap > div.headerBtn > button.btnLogin.btnLine.btnNormal.btnLine_blue', { visible: true });
+        const lButton = await page.$('#header > div.headerWrap > div.headerBtn > button.btnLogin.btnLine.btnNormal.btnLine_blue');
+        await lButton.click();
+        console.log("Redirected to login page");
+        // await page.waitForNavigation({ waitUntil: 'networkidle2' });
+        // Click on the login submit button and wait for navigation
+        // await Promise.all([
+        //     page.click('#header > div.headerWrap > div.headerBtn > button.btnLogin.btnLine.btnNormal.btnLine_blue'),
+        //     page.waitForNavigation({ waitUntil: 'networkidle2' })
+        // ]);
+
+        // // Get the current URL after successful login
+        // const redirectedURL = page.url();
+        // console.log("Redirected URL after login:", redirectedURL);
+
+        // const redirectedURL = page.url();
+
+        // console.log("url->",redirectedURL);
+
+        // const newPageURL = await page.evaluate(() => window.location.href);
+        // console.log("New page URL after login:", newPageURL);
+        //  Navigate to the login page
+         await page.goto('https://www.eais.go.kr/moct/awp/abb01/AWPABB01F01?returnUrl=%2F', { waitUntil: 'networkidle2' });
+         console.log("Navigated to login page");
+
+        const redirectedURL = page.url();
+
+        console.log("url->",redirectedURL);
         // Perform login
-        await page.type('#userid', loginDetails.id);
-        await page.type('#password', loginDetails.pw);
-        await page.click('#loginButton');
-        await page.waitForNavigation();
+        await page.waitForSelector('#membId', { visible: true });
+        console.log("helo");
+        await page.type('#membId', loginDetails.id);
+        console.log("helo1");
+        await page.type('#pwd', loginDetails.pw);
+        console.log("helo2");
+        await page.click('#container > div.content.pb80 > div > div > div.fl > div.loginForm > button');
+        await page.waitForNavigation({ waitUntil: 'networkidle2' });
+        console.log("Logged in");
 
         let pdfPaths = [];
 
@@ -41,22 +82,26 @@ const loginDetails = { id: 'ohk5004', pw: 'MufinNumber1' };
                 // Click -> "Issuance of building ledger"
                 await page.waitForSelector('#issuanceButton');
                 await page.click('#issuanceButton'); 
+                console.log(`Clicked issuance button for address: ${address}`);
 
                 // Input the address
                 await page.waitForSelector('#addressInput');
                 await page.type('#addressInput', address); 
                 await page.click('#searchButton'); 
                 await page.waitForNavigation({ waitUntil: 'networkidle2' });
+                console.log(`Searched for address: ${address}`);
 
                 // Print PDF
                 const pdfPath = path.resolve(__dirname, `${address.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`);
                 pdfPaths.push(pdfPath);
                 await page.pdf({ path: pdfPath, format: 'A4' });
+                console.log(`Saved PDF for address: ${address}`);
 
                 // Go back to the main page
                 await page.waitForSelector('#homeButton');
                 await page.click('#homeButton'); 
                 await page.waitForSelector('#issuanceButton'); // Wait until the main page is loaded
+                console.log(`Returned to main page for address: ${address}`);
             } catch (error) {
                 console.error(`Error processing address ${address}: ${error.message}`);
             }
@@ -65,13 +110,16 @@ const loginDetails = { id: 'ohk5004', pw: 'MufinNumber1' };
         // Merge PDFs
         const mergedPdfPath = path.resolve(__dirname, 'merged.pdf');
         await mergePDFs(pdfPaths, mergedPdfPath);
+        console.log("Merged PDFs");
 
         // Extract and translate text from merged PDF
         const extractedText = await extractTextFromPDF(mergedPdfPath);
         const translatedText = await translateText(extractedText);
+        console.log("Extracted and translated text");
 
         // Overlay translated text onto the merged PDF
         await overlayTranslatedText(mergedPdfPath, translatedText);
+        console.log("Overlayed translated text");
 
     } catch (error) {
         console.error(`Error in script execution: ${error.message}`);
