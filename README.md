@@ -22,7 +22,7 @@ This project automates the task of logging into a website, navigating through it
 1. **Clone the repository**:
 
    ```sh
-   git clone https://github.com/yourusername/RPADocFetcher.git
+   git clone https://github.com/nsubhadipta/RPADocFetcher.git
 2. **Navigate to the project directory**:
 
    ```sh
